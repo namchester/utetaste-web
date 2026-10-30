@@ -1,0 +1,314 @@
+{
+  "updated": "2026-10-29",
+  "description": "Ảnh chụp thật từ Wikimedia Commons; ảnh nguồn được thu nhỏ/nén bằng công cụ xử lý ảnh thông thường, không tạo ảnh bằng AI.",
+  "photos": [
+    {
+      "id": "chicken",
+      "label": "Cơm gà nướng mật ong",
+      "title": "File:Grilled chicken with rice.jpg",
+      "file": "/images/food/chicken.jpg",
+      "author": "Aerous",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Grilled_chicken_with_rice.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Grilled_chicken_with_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2018-12-09 12:57:06",
+      "camera": [
+        {
+          "name": "Model",
+          "value": "Redmi 5 Plus"
+        },
+        {
+          "name": "Make",
+          "value": "Xiaomi"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2018:12:09 12:57:06"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [
+        "/images/hero-dish.jpg"
+      ],
+      "sha256": "6652fe01b37c0be32a148780d84269610c1e3afeca3e915cd309ce1ae5eddc41"
+    },
+    {
+      "id": "beef",
+      "label": "Bò lúc lắc khoai tây",
+      "title": "File:Product Shots of Food-Bo Luc Lac.jpg",
+      "file": "/images/food/beef.jpg",
+      "author": "Nick Nguyen",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Product_Shots_of_Food-Bo_Luc_Lac.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/7/78/Product_Shots_of_Food-Bo_Luc_Lac.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2009-06-24 15:27:18",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "Canon"
+        },
+        {
+          "name": "Model",
+          "value": "Canon EOS DIGITAL REBEL XTi"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2009:06:24 15:27:18"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "0ba19537147395775b34ce5103eefbc1da435cdeb3ac92a4b444261fb5280f30"
+    },
+    {
+      "id": "pasta",
+      "label": "Mì Ý sốt bò bằm",
+      "title": "File:Spaghetti Bolognese Lokal K.jpg",
+      "file": "/images/food/pasta.jpg",
+      "author": "Superbass",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Spaghetti_Bolognese_Lokal_K.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/1/11/Spaghetti_Bolognese_Lokal_K.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2014-05-29 19:06:04",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "Canon"
+        },
+        {
+          "name": "Model",
+          "value": "Canon EOS 60D"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2014:05:29 19:06:04"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "93a81af274d73fcc3d78169793e4959ef933d399eb6e7d65a53d427d1d1f7924"
+    },
+    {
+      "id": "rice",
+      "label": "Cơm chiên hải sản",
+      "title": "File:Koh Mak, Thailand, Fried rice with seafood, Thai fried rice.jpg",
+      "file": "/images/food/rice.jpg",
+      "author": "Vyacheslav Argenberg",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Koh_Mak,_Thailand,_Fried_rice_with_seafood,_Thai_fried_rice.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Koh_Mak%2C_Thailand%2C_Fried_rice_with_seafood%2C_Thai_fried_rice.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2010-01-26 14:00:53",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "OLYMPUS IMAGING CORP."
+        },
+        {
+          "name": "Model",
+          "value": "E-P1"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2010:01:26 14:00:53"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "ce62a48f952a23f2af6d5b167a900f12212f9052611374f8dfc06fa7e2c569a3"
+    },
+    {
+      "id": "salad",
+      "label": "Salad vườn xanh",
+      "title": "File:Salad.jpg",
+      "file": "/images/food/salad.jpg",
+      "author": "Gila Brand",
+      "license": "CC BY 2.5",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.5",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Salad.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/0/04/Salad.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2005",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "Canon"
+        },
+        {
+          "name": "Model",
+          "value": "Canon PowerShot S30"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2005:07:17 18:59:48"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "233ab479f61faa02c816a195cfcc71a1817a1f87565cab0f4702419e6c316775"
+    },
+    {
+      "id": "fries",
+      "label": "Khoai tây chiên",
+      "title": "File:Truffle oil french fries (33024792848).jpg",
+      "file": "/images/food/fries.jpg",
+      "author": "Tony Webster from Minneapolis, Minnesota, United States",
+      "license": "CC BY-SA 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Truffle_oil_french_fries_(33024792848).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/8/8e/Truffle_oil_french_fries_%2833024792848%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2019-01-27 14:40",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "SONY"
+        },
+        {
+          "name": "Model",
+          "value": "ILCE-7RM3"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2019:01:27 14:40:01"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "a6e03ca40744f52e5691e21cacb6e5f1061c362753e78ad1d111ba03fcc003d9"
+    },
+    {
+      "id": "tea",
+      "label": "Trà đào cam sả",
+      "title": "File:Peach iced tea with orange slices.jpg",
+      "file": "/images/food/tea.jpg",
+      "author": "Baoothersks",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Peach_iced_tea_with_orange_slices.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/6/6b/Peach_iced_tea_with_orange_slices.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2022-07-07 12:27:10",
+      "camera": [
+        {
+          "name": "Model",
+          "value": "Foodie"
+        },
+        {
+          "name": "Make",
+          "value": "Snowcorp"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2022:07:07 12:27:10"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "a26fb1dde6bb1bcdf6fda58754b8bae36e0b6e74f6a84167ae7f143995ab06f0"
+    },
+    {
+      "id": "lemon",
+      "label": "Nước chanh tươi",
+      "title": "File:Lemonade 2.jpg",
+      "file": "/images/food/lemon.jpg",
+      "author": "Shisma",
+      "license": "CC BY 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Lemonade_2.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/4/47/Lemonade_2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "6 July 2020 (according to Exif data)",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "Google"
+        },
+        {
+          "name": "Model",
+          "value": "Pixel 4"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2020:07:06 20:25:46"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "a85dc6946fa34c08ed27ac33739e2ca041d59b07bbbc5797084104db9ebba749"
+    },
+    {
+      "id": "dessert",
+      "label": "Panna cotta dâu",
+      "title": "File:Panna Cotta With Strawberry Sauce (KETO, LCHF, Low Carb, Gluten free).jpg",
+      "file": "/images/food/dessert.jpg",
+      "author": "Ewelina Podrez-Siama",
+      "license": "CC BY 2.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Panna_Cotta_With_Strawberry_Sauce_(KETO,_LCHF,_Low_Carb,_Gluten_free).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Panna_Cotta_With_Strawberry_Sauce_%28KETO%2C_LCHF%2C_Low_Carb%2C_Gluten_free%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2022-02-12 17:47:47",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "Apple"
+        },
+        {
+          "name": "Model",
+          "value": "iPhone 13 Pro"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2022:02:12 17:47:47"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "89d35efe803d93d8ab8a58d592fb93206dfb67868489edce1d8d181fcf60703a"
+    },
+    {
+      "id": "cake",
+      "label": "Bánh chocolate",
+      "title": "File:Piece of chocolate cake on a white plate decorated with chocolate sauce.jpg",
+      "file": "/images/food/cake.jpg",
+      "author": "Daria Yakovleva; chỉnh sửa: Subsidiary account",
+      "license": "CC0",
+      "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Piece_of_chocolate_cake_on_a_white_plate_decorated_with_chocolate_sauce.jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/e/ef/Piece_of_chocolate_cake_on_a_white_plate_decorated_with_chocolate_sauce.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2017-01-11",
+      "camera": [],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "80d62644df8d1ca1efb317ad51681e5ff8200659d32af02d62453a4e382148fa"
+    },
+    {
+      "id": "interior",
+      "label": "Không gian nhà hàng — nền đăng nhập",
+      "title": "File:Childs' Restaurant building interior (84200).jpg",
+      "file": "/images/login-art.jpg",
+      "author": "Rhododendrites",
+      "license": "CC BY-SA 4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "sourcePage": "https://commons.wikimedia.org/wiki/File:Childs%27_Restaurant_building_interior_(84200).jpg",
+      "sourceImage": "https://upload.wikimedia.org/wikipedia/commons/b/b4/Childs%27_Restaurant_building_interior_%2884200%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+      "captureDate": "2021-07-18 17:17:29",
+      "camera": [
+        {
+          "name": "Make",
+          "value": "OLYMPUS IMAGING CORP."
+        },
+        {
+          "name": "Model",
+          "value": "E-M5MarkII"
+        },
+        {
+          "name": "DateTimeOriginal",
+          "value": "2021:07:18 17:17:29"
+        }
+      ],
+      "changes": "Thu nhỏ tối đa 1280 px, xuất JPEG chất lượng 85; giao diện có thể cắt khung bằng CSS.",
+      "extraUses": [],
+      "sha256": "37b895722954f3ed07909f6492c887959d760cfa5b0d7440427ba5b4e6ab1b6a"
+    }
+  ]
+}

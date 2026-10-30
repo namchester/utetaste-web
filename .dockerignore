@@ -1,0 +1,32 @@
+# Only send files needed to build the application to Docker.
+# Keep the Maven Wrapper available for builds outside the installed Maven image.
+**
+!Dockerfile
+!.dockerignore
+!pom.xml
+!mvnw
+!mvnw.cmd
+!.mvn/
+!.mvn/**
+!src/
+!src/**
+
+# Do not allow private or generated files nested inside the allowed directories.
+**/.env
+**/.env.*
+**/application-local.yml
+**/application-local.yaml
+**/application-secret*.yml
+**/application-secret*.yaml
+**/target/
+**/*.class
+**/*.log
+**/*.dump
+**/*.backup
+**/*.bak
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore

@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <!-- Select JDK 25 and load the local .env in IntelliJ before running.
+       Stop the Docker app first. Publish the existing db using the approved override.
+       Never copy secret values into this shared configuration. -->
+  <configuration default="false" name="UTE Taste - Local Spring Boot" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="vn.utetaste.UtetasteApplication" />
+    <module name="utetaste" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.datasource.url=jdbc:postgresql://127.0.0.1:5433/utetaste --server.port=8080 --app.base-url=http://localhost:8080 --app.cookie-secure=false --spring.thymeleaf.cache=false" />
+    <shortenClasspath name="ARGS_FILE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

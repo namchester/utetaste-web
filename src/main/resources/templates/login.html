@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Đăng nhập')}"></head>
+<body data-live=""><a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
+<div class="auth-layout">
+  <section class="auth-art">
+    <div class="auth-art-overlay"></div>
+    <div class="auth-art-content">
+      <div class="auth-art-header">
+        <a class="brand light" href="/">
+          <span class="brand-mark">U</span>
+          <span class="brand-text">UTETaste<small class="brand-sub">CULINARY EXCELLENCE</small></span>
+        </a>
+      </div>
+
+      <div class="auth-art-body">
+        <div class="luxury-badge">
+          <span class="luxury-badge-dot">✦</span>
+          <span>KHÔNG GIAN ĐIỀU HÀNH ẨM THỰC</span>
+        </div>
+        <h1 class="auth-art-title">
+          Mỗi bữa ăn ngon<br>
+          bắt đầu từ<br>
+          <em>một đội ngũ tốt.</em>
+        </h1>
+        <p class="auth-art-desc">
+          Nền tảng quản trị và vận hành thông minh kết nối liền mạch giữa lễ tân, phục vụ bàn và đội ngũ bếp UTETaste.
+        </p>
+
+        <div class="auth-art-features">
+          <div class="art-feat-pill">
+            <span class="feat-icon">⚡</span>
+            <span>Gọi món QR tức thì</span>
+          </div>
+          <div class="art-feat-pill">
+            <span class="feat-icon">🍳</span>
+            <span>Bếp điều phối thông minh</span>
+          </div>
+          <div class="art-feat-pill">
+            <span class="feat-icon">📊</span>
+            <span>Doanh thu chuẩn xác</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-art-footer">
+        <div class="auth-foot">NHÀ HÀNG · CON NGƯỜI · TRẢI NGHIỆM TRỌN VẸN</div>
+      </div>
+    </div>
+  </section>
+
+  <main class="auth-form-wrap" id="main-content" tabindex="-1">
+    <div class="auth-card">
+      <div class="auth-card-head">
+        <span class="eyebrow">CHÀO MỪNG TRỞ LẠI</span>
+        <h2>Đăng nhập UTE Taste</h2>
+        <p class="text-muted">Dùng email đã xác minh hoặc tên đăng nhập nhân viên.</p>
+      </div>
+
+      <div class="alert alert-danger" th:if="${param.error}" role="alert">
+        <span class="alert-icon">⚠️</span>
+        <span>Tên đăng nhập hoặc mật khẩu chưa đúng.</span>
+      </div>
+      <div class="alert alert-danger" th:if="${param.locked}" role="alert">
+        <span class="alert-icon">⚠️</span>
+        <span>Bạn đã thử đăng nhập quá nhiều lần. Vui lòng thử lại sau 15 phút.</span>
+      </div>
+      <div class="alert alert-info" th:if="${param.expired}" role="status">
+        <span class="alert-icon">ℹ️</span>
+        <span>Phiên làm việc đã hết hạn. Hãy đăng nhập lại.</span>
+      </div>
+      <div class="alert alert-success" th:if="${param.changed}" role="status">
+        <span class="alert-icon">✓</span>
+        <span>Đã đổi mật khẩu. Hãy đăng nhập lại.</span>
+      </div>
+      <div class="alert alert-success" th:if="${param.logout}" role="status">
+        <span class="alert-icon">✓</span>
+        <span>Bạn đã đăng xuất thành công.</span>
+      </div>
+
+      <form th:action="@{/login}" method="post" class="auth-main-form">
+        <div class="form-group mb-3">
+          <label class="form-label" for="username">Email hoặc tên đăng nhập</label>
+          <div class="input-icon-wrap">
+            <svg class="input-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <input class="form-control" id="username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="254" placeholder="Email hoặc tên đăng nhập" required autofocus>
+          </div>
+        </div>
+
+        <div class="form-group mb-4">
+          <label class="form-label" for="password">Mật khẩu</label>
+          <div class="input-icon-wrap">
+            <svg class="input-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" maxlength="72" placeholder="Nhập mật khẩu" required>
+            <button type="button" class="btn-toggle-pwd" id="togglePasswordBtn" aria-label="Hiện mật khẩu" aria-controls="password" aria-pressed="false">
+              <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-auth-submit w-100" type="submit">
+          <span>Đăng nhập</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <p class="mt-3"><a href="/register">Đăng ký tài khoản</a> · <a href="/forgot-password">Quên mật khẩu?</a> · <a href="/verify-email">Xác minh email</a></p><p class="alert alert-success" th:if="${param.verified}" role="status">Email đã được xác minh. Hãy đăng nhập.</p><p class="alert alert-success" th:if="${param.linked}" role="status">Đã liên kết email khôi phục. Hãy đăng nhập lại.</p><div class="auth-guest-box">
+        <div class="auth-guest-icon">🍽️</div>
+        <div>
+          <strong>Bạn là khách dùng bữa tại bàn?</strong>
+          <p>Quét mã QR được đặt trên mặt bàn để chọn món yêu thích trực tiếp.</p>
+        </div>
+      </div>
+
+      <div class="auth-card-foot text-center"><p class="small"><a href="/images/food/credits.html">Nguồn ảnh chụp</a></p>
+        <a class="back-link" href="/">
+          <span class="back-arrow">←</span>
+          <span>Quay lại trang chủ</span>
+        </a>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Password visibility toggle
+  const pwdInput = document.getElementById('password');
+  const toggleBtn = document.getElementById('togglePasswordBtn');
+  if (toggleBtn && pwdInput) {
+    toggleBtn.addEventListener('click', () => {
+      const isPwd = pwdInput.type === 'password';
+      pwdInput.type = isPwd ? 'text' : 'password';
+      toggleBtn.classList.toggle('active', isPwd);
+      toggleBtn.setAttribute('aria-pressed', String(isPwd));
+      toggleBtn.setAttribute('aria-label', isPwd ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    });
+  }
+</script>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

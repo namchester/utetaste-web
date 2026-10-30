@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Trang chủ · Ẩm thực tinh hoa & Đặt món tại bàn')}"></head>
+<body data-live=""><a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
+
+<header class="guest-nav luxury-nav">
+  <a href="/" class="brand">
+    <span class="brand-mark">U</span>
+    <span class="brand-text">UTETaste<small class="brand-sub">RESTAURANT &amp; BAR</small></span>
+  </a>
+  <button type="button" class="btn btn-light public-nav-toggle" aria-label="Mở điều hướng trang chủ" aria-controls="public-navigation" aria-expanded="false" data-public-nav>☰</button><nav class="nav-links" id="public-navigation" aria-label="Điều hướng trang chủ">
+    <a href="#quy-trinh" class="nav-link">Quy trình gọi món</a>
+    <a href="#dac-quyen" class="nav-link">Điểm đặc sắc</a>
+    <a href="#chi-nhanh" class="nav-link">Hệ thống chi nhánh</a>
+  </nav>
+  <div class="nav-actions">
+    <a href="/login" class="btn btn-staff-portal" aria-label="Đăng nhập dành cho nhân viên">
+      <span>Nhân viên</span>
+      <span class="staff-arrow">↗</span>
+    </a>
+  </div>
+</header>
+
+<main class="landing" id="main-content" tabindex="-1">
+  <!-- HERO SECTION -->
+  <section class="landing-hero">
+    <div class="hero-text-wrap">
+      <div class="luxury-badge">
+        <span class="luxury-badge-dot">✦</span>
+        <span>TRẢI NGHIỆM ẨM THỰC THẾ HỆ MỚI</span>
+      </div>
+      <h1 class="hero-title">
+        Ngồi lại một chút,<br>
+        <em>ăn ngon cùng nhau.</em>
+      </h1>
+      <p class="hero-description">
+        Hương vị đậm đà được kết tinh từ nguyên liệu tươi ngon mỗi ngày. Chỉ cần quét mã QR tại bàn để khám phá thực đơn phong phú, chọn món theo khẩu vị và tận hưởng bữa ăn ấm cúng trọn vẹn.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#quy-trinh" class="btn btn-primary btn-hero-cta">
+          <span>Khám phá cách gọi món</span>
+          <span>↓</span>
+        </a>
+        <a href="#chi-nhanh" class="btn btn-outline-custom">
+          <span>Tìm chi nhánh gần bạn</span>
+        </a>
+      </div>
+
+      <div class="hero-pills">
+        <div class="hero-pill-item">
+          <span class="pill-number">01</span>
+          <span class="pill-text">Quét mã tại bàn</span>
+        </div>
+        <div class="hero-pill-item">
+          <span class="pill-number">02</span>
+          <span class="pill-text">Chọn món &amp; ghi chú</span>
+        </div>
+        <div class="hero-pill-item">
+          <span class="pill-number">03</span>
+          <span class="pill-text">Thưởng thức tại chỗ</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="hero-visual-card">
+        <img class="hero-main-photo" src="/images/hero-dish.jpg" alt="Ảnh chụp món gà nướng và cơm">
+        <div class="floating-badge badge-top-right">
+          <span class="badge-star">★ 4.9</span>
+          <span class="badge-sub">Hơn 10.000+ thực khách yêu thích</span>
+        </div>
+        <div class="floating-badge badge-bottom-left">
+          <div class="badge-icon-wrap">🌿</div>
+          <div>
+            <strong>Tươi ngon mỗi ngày</strong>
+            <small>100% Nguyên liệu tuyển chọn</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS SECTION -->
+  <section id="quy-trinh" class="how-it-works-section">
+    <div class="section-center-head">
+      <span class="eyebrow">QUY TRÌNH THÔNG MINH</span>
+      <h2>Gọi món dễ dàng trong 3 bước</h2>
+      <p class="text-muted">Không cần chờ đợi nhân viên mang menu, bạn hoàn toàn chủ động điều chỉnh món ăn theo sở thích</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">📱</div>
+        <h3>Quét mã QR tại bàn</h3>
+        <p>Mỗi bàn ăn đều có một mã QR riêng biệt. Mở máy ảnh hoặc Zalo để quét và mở ngay thực đơn điện tử.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">🍲</div>
+        <h3>Chọn món &amp; Tùy chỉnh</h3>
+        <p>Xem hình ảnh minh họa sống động, giá cả rõ ràng và tùy chọn mức độ cay, ngọt hoặc ghi chú đặc biệt.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">✨</div>
+        <h3>Nhà bếp phục vụ tận bàn</h3>
+        <p>Đơn gọi được đồng bộ ngay tức khắc đến màn hình bếp. Đội ngũ đầu bếp bắt tay chuẩn bị và đưa tới bàn của bạn.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VALUE PROPOSITION SECTION -->
+  <section id="dac-quyen" class="features-section">
+    <div class="features-header">
+      <div>
+        <span class="eyebrow">ĐẶC QUYỀN TRẢI NGHIỆM</span>
+        <h2>Vì sao bạn sẽ yêu UTETaste?</h2>
+      </div>
+    </div>
+
+    <div class="features-grid">
+      <article class="feature-card">
+        <div class="feature-icon">🍳</div>
+        <h3>Hương vị ẩm thực nguyên bản</h3>
+        <p>Mỗi món ăn là một tác phẩm được các đầu bếp chăm chút từ công thức gia truyền đến cách bày trí tinh tế.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Đặt món không chạm, tức thì</h3>
+        <p>Hệ thống tự động cập nhật tình trạng món theo thời gian thực, không lo món hết hay gọi nhầm đơn.</p>
+      </article>
+
+      <article class="feature-card">
+        <div class="feature-icon">🥂</div>
+        <h3>Không gian sang trọng &amp; ấm cúng</h3>
+        <p>Ánh sáng ấm áp, bàn ghế tinh tế thích hợp cho cả những buổi sum họp gia đình, bạn bè và hẹn hò lãng mạn.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- LOCATIONS SECTION -->
+  <section id="chi-nhanh" class="locations">
+    <div class="locations-head">
+      <div>
+        <span class="eyebrow">HỆ THỐNG NHÀ HÀNG</span>
+        <h2>Chi nhánh của chúng mình</h2>
+        <p class="text-muted">Chọn địa điểm gần bạn nhất để tận hưởng trải nghiệm ẩm thực trọn vẹn</p>
+      </div>
+    </div>
+
+    <div class="location-grid">
+      <article th:each="b : ${branches}" class="branch-card">
+        <div class="branch-card-top">
+          <span class="location-icon">⌂</span>
+          <span class="branch-status">● Đang mở cửa đón khách</span>
+        </div>
+        <h3 th:text="${b.name}">UTETaste - Chi nhánh Trung tâm</h3>
+        <p class="branch-address" th:text="${b.address}">01 Võ Văn Ngân, TP. Thủ Đức, TP. Hồ Chí Minh</p>
+        <div class="branch-meta">
+          <span class="branch-phone">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <span th:text="${b.phone}">028 3896 8641</span>
+          </span>
+        </div>
+      </article>
+
+      <div th:if="${#lists.isEmpty(branches)}" class="empty-state">
+        <span class="empty-icon">📍</span>
+        <p>Hệ thống chi nhánh đang được cập nhật thêm địa điểm mới. Xin quý khách vui lòng quay lại sau.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="public-footer luxury-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="/" class="brand light">
+        <span class="brand-mark">U</span>
+        <span class="brand-text">UTETaste<small class="brand-sub">CULINARY EXCELLENCE</small></span>
+      </a>
+      <p class="footer-desc">
+        Hệ sinh thái ẩm thực số kết nối thực khách và nhà bếp, mang đến trải nghiệm gọi món tại bàn hiện đại, chu đáo và chuẩn vị.
+      </p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Về chúng tôi</h4>
+        <a href="#quy-trinh">Quy trình gọi món</a>
+        <a href="#dac-quyen">Điểm đặc sắc</a>
+        <a href="#chi-nhanh">Chi nhánh</a><a href="/images/food/credits.html">Nguồn ảnh chụp</a>
+      </div>
+      <div class="footer-col">
+        <h4>Dành cho nhân viên</h4>
+        <a href="/login">Đăng nhập làm việc</a>
+        <a href="/staff">Bảng điều hành bếp</a>
+        <a href="/staff/tables">Quản lý bàn &amp; mã QR</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 UTETaste Restaurant. Tất cả các quyền được bảo lưu. Thiết kế và vận hành bởi đội ngũ UTETaste.</p>
+  </div>
+</footer>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+# Development override. Reuses compose.yml's db service and existing named volume.
+# This machine already has PostgreSQL on 5432; use 5433 unless explicitly overridden.
+# Applying this file recreates the db container to publish the port: approval/backup first.
+services:
+  db:
+    ports:
+      - target: 5432
+        published: "${INTELLIJ_DB_PORT:-5433}"
+        host_ip: 127.0.0.1
+        protocol: tcp

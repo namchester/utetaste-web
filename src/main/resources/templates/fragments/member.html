@@ -1,0 +1,34 @@
+<!doctype html><html lang="vi" xmlns:th="http://www.thymeleaf.org"><body>
+<aside th:fragment="navigation" class="member-nav no-print" aria-label="Điều hướng khách hàng">
+  <a href="/account" class="brand"><span class="brand-mark">U</span><span>UTETaste<small class="d-block">GÓC CỦA BẠN</small></span></a>
+  <p class="member-nav-intro">Bữa ngon, kỷ niệm đẹp.</p>
+  <nav aria-label="Tài khoản thành viên">
+    <a href="/account" th:attr="aria-current=${currentPath == '/account' ? 'page' : null}"><span aria-hidden="true">◫</span> Tổng quan</a>
+    <a href="/account/profile" th:attr="aria-current=${currentPath == '/account/profile' ? 'page' : null}"><span aria-hidden="true">◎</span> Thông tin cá nhân</a>
+    <a href="/account/orders" th:attr="aria-current=${currentPath.startsWith('/account/orders') ? 'page' : null}"><span aria-hidden="true">≡</span> Lịch sử đơn hàng</a>
+    <a href="/account/favorites" th:attr="aria-current=${currentPath.startsWith('/account/favorites') ? 'page' : null}"><span aria-hidden="true">♡</span> Món yêu thích</a>
+    <a href="/account/points" th:attr="aria-current=${currentPath == '/account/points' ? 'page' : null}"><span aria-hidden="true">✦</span> Điểm thành viên</a>
+    <a href="/account/security" th:attr="aria-current=${currentPath == '/account/security' or currentPath == '/account/password' ? 'page' : null}"><span aria-hidden="true">◇</span> Bảo mật</a>
+  </nav>
+  <div class="member-nav-footer"><a href="/" class="btn btn-outline-dark">Trang chủ ↗</a><form th:action="@{/logout}" method="post"><button class="btn btn-light w-100">Đăng xuất</button></form></div>
+</aside>
+<article th:fragment="order(row)" class="member-order">
+  <div class="member-line"><div><a th:href="@{/account/orders/{id}(id=${row.order.id})}" th:text="${row.order.code}" class="member-order-code"></a><span class="d-block small text-muted" th:text="${row.branch + ' · ' + row.order.tableLabel}"></span></div><span class="status-pill" th:classappend="${row.order.status}" th:text="${@fmt.status(row.order.status)}"></span></div>
+  <p class="small text-muted mb-2" th:text="${@fmt.time(row.order.createdAt)}"></p>
+  <ul class="member-order-items"><li th:each="item:${row.order.items}"><span th:text="${item.quantity + ' × ' + item.name}"></span><strong th:text="${@fmt.money(item.total)}"></strong></li></ul>
+  <div class="member-line"><span class="small" th:text="${row.paid ? 'Phiên bàn đã thanh toán' : 'Chưa có thanh toán'}"></span><strong th:text="${@fmt.money(row.order.total)}"></strong></div>
+  <a th:href="@{/account/orders/{id}(id=${row.order.id})}" class="btn btn-outline-dark mt-3">Xem chi tiết →</a>
+</article>
+<article th:fragment="favorite(f)" class="member-dish">
+  <img th:with="photoUrl=${@fmt.image(f.imageUrl)}" th:src="${photoUrl}" th:alt="${f.name}" loading="lazy">
+  <div class="member-dish-body"><small class="text-muted" th:text="${f.category}"></small><h3><a th:href="@{/account/favorites/{id}(id=${f.id})}" th:text="${f.name}"></a></h3><strong th:text="${@fmt.money(f.price)}"></strong>
+    <p class="small mt-2" th:text="${!f.active ? 'Đã ngừng bán' : qr == null ? 'Quét QR tại bàn để chọn món' : f.atTable ? 'Có thể chọn tại bàn hiện tại' : 'Tạm hết hoặc chưa bán tại chi nhánh này'}"></p>
+    <div class="member-actions"><a class="btn btn-primary" th:if="${f.atTable and qr != null}" th:href="@{/account/favorites/{id}/choose(id=${f.id})}">Chọn món</a><a class="btn btn-outline-dark" th:href="@{/account/favorites/{id}(id=${f.id})}">Chi tiết</a><form th:action="@{/account/favorites/{id}(id=${f.id})}" method="post"><input type="hidden" name="selected" value="false"><button class="btn btn-light" th:attr="aria-label=${'Bỏ yêu thích ' + f.name}">Bỏ lưu</button></form></div>
+  </div>
+</article>
+<nav th:fragment="pager(data,path)" th:if="${data.totalPages > 1}" class="member-pager" aria-label="Phân trang">
+  <a class="btn btn-outline-dark" th:if="${data.hasPrevious()}" th:href="@{${path}(page=${data.number - 1},size=${data.size},from=${from},to=${to},status=${status},sort=${sort})}">← Trước</a>
+  <span th:text="${'Trang ' + (data.number + 1) + ' / ' + data.totalPages}"></span>
+  <a class="btn btn-outline-dark" th:if="${data.hasNext()}" th:href="@{${path}(page=${data.number + 1},size=${data.size},from=${from},to=${to},status=${status},sort=${sort})}">Sau →</a>
+</nav>
+</body></html>

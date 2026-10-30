@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments/layout :: head('Tài khoản cá nhân')}"></head>
+<body><a class="skip-link" href="#main-content">Đi đến nội dung chính</a><main id="main-content" tabindex="-1" class="container py-5" style="max-width:700px"><section class="panel">
+<a href="/">UTE Taste · Trang chủ</a><h1 class="mt-3">Tài khoản của bạn</h1>
+<p id="profile-summary"><strong th:text="${profile.fullName}"></strong> · <span th:text="${@fmt.role(profile.role)}"></span></p>
+<p>Email khôi phục: <span th:text="${profile.emailVerified ? profile.email : 'Chưa liên kết email đã xác minh'}"></span></p>
+<p class="alert alert-success" th:if="${success}" th:text="${success}" role="status"></p>
+<p class="alert alert-danger" th:if="${message}" th:text="${message}" role="alert"></p>
+<p th:if="${profile.role.name() == 'USER'}">Để gọi món, quét QR tại bàn đã được nhân viên mở. Tài khoản cá nhân không có quyền vận hành nhà hàng.</p>
+<a th:if="${profile.role.name() != 'USER'}" href="/staff">Về không gian làm việc</a>
+<p><a href="/account/password">Đổi mật khẩu</a></p><hr>
+<h2>Liên kết / đổi email khôi phục</h2><p>Email mới chỉ được lưu sau khi nhập đúng OTP. Sau xác minh, bạn cần đăng nhập lại.</p>
+<form th:action="@{/account/email}" method="post">
+<label class="form-label" for="email">Email mới</label><input class="form-control mb-3" id="email" name="email" type="email" maxlength="254" autocomplete="email" required>
+<label class="form-label" for="currentPassword">Mật khẩu hiện tại</label><input class="form-control mb-3" id="currentPassword" name="currentPassword" type="password" maxlength="72" autocomplete="current-password" required>
+<button class="btn btn-primary">Gửi mã liên kết email</button></form><hr>
+<form th:action="@{/account/email/verify}" method="post">
+<label class="form-label" for="code">OTP liên kết email</label><input class="form-control mb-3" id="code" name="code" inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" autocomplete="one-time-code" required>
+<button class="btn btn-outline-dark">Xác minh email khôi phục</button></form><hr>
+<form th:action="@{/logout}" method="post"><button class="btn btn-outline-secondary">Đăng xuất</button></form>
+</section></main><div th:replace="~{fragments/layout :: scripts}"></div></body></html>

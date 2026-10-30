@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"><head th:replace="~{fragments/layout :: head('Xác minh email')}"></head>
+<body><main class="container py-5" style="max-width:600px"><section class="panel">
+<h1>Xác minh email</h1><p>Tài khoản đang chờ xác minh. Nhập mã 8 chữ số được gửi đến email của bạn. Mã có hạn 5 phút.</p>
+<p class="alert alert-success" th:if="${sent}" role="status">Đã tạo tài khoản và gửi mã xác minh. Bạn chưa được đăng nhập tự động.</p>
+<p class="alert alert-success" th:if="${success}" th:text="${success}" role="status"></p>
+<p class="alert alert-danger" th:if="${message}" th:text="${message}" role="alert"></p>
+<form th:action="@{/verify-email}" method="post">
+<label class="form-label" for="email">Email đăng ký</label><input class="form-control mb-3" id="email" name="email" type="email" maxlength="254" autocomplete="email" th:value="${email}" required>
+<label class="form-label" for="code">Mã OTP</label><input class="form-control mb-3" id="code" name="code" inputmode="numeric" pattern="[0-9]{8}" minlength="8" maxlength="8" autocomplete="one-time-code" required>
+<button class="btn btn-primary">Xác minh email</button></form>
+<hr><form th:action="@{/verify-email/resend}" method="post">
+<label class="form-label" for="resend-email">Email nhận lại mã</label><input class="form-control mb-3" id="resend-email" name="email" type="email" maxlength="254" th:value="${email}" required>
+<button class="btn btn-outline-dark" data-resend>Gửi lại mã</button><p class="small text-muted mt-2">Mỗi lần gửi cách nhau ít nhất 60 giây; tối đa 5 email mỗi giờ cho tài khoản.</p></form>
+<a href="/login">Về đăng nhập</a></section></main><div th:replace="~{fragments/layout :: scripts}"></div></body></html>

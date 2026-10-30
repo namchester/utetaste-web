@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:utetaste;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;LOCK_TIMEOUT=10000
+    username: sa
+    password: ''
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+app:
+  otp-secret: test-only-otp-secret-at-least-32-bytes-long
+  mail:
+    enabled: false
+    from: no-reply@example.test
+  jwt-secret: test-only-secret-of-at-least-32-bytes-long-for-jwt
+  seed-demo: true
+  demo-password: Utetaste@Test2026
+  admin-password: Utetaste@Test2026
