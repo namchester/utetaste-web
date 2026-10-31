@@ -6,7 +6,7 @@ UTE Taste là ứng dụng web hỗ trợ quản lý chuỗi nhà hàng và đ�
 
 ## 2. Công nghệ sử dụng
 
-- Java 25, Spring Boot 3.5.16, Maven 3.9.16 qua Maven Wrapper.
+- Java 25, Spring Boot 3.5.16, Maven 3.9.16 qua Maven Wrapper 3.3.2.
 - Thymeleaf, Bootstrap 5.3.3, JavaScript.
 - PostgreSQL 16, Spring Data JPA, Flyway.
 - Spring Security, JWT cookie HttpOnly, BCrypt, CSRF.
@@ -33,7 +33,7 @@ UTE Taste là ứng dụng web hỗ trợ quản lý chuỗi nhà hàng và đ�
 
 Áp dụng cho bản clone mới. Với database đã có dữ liệu, sao lưu và kiểm tra migration trước startup; giữ đúng Compose project và volume hiện có.
 
-1. **Clone repository PRIVATE** bằng tài khoản được cấp quyền:
+1. **Clone repository PUBLIC:**
 
    ```powershell
    git clone https://github.com/namchester/utetaste-web.git
@@ -81,9 +81,9 @@ UTE Taste là ứng dụng web hỗ trợ quản lý chuỗi nhà hàng và đ�
    docker compose logs --tail 100 app
    ```
 
-**IntelliJ / Maven local:** mở pom.xml, chọn JDK 25 cho Project/Importer/Runner; main class `vn.utetaste.UtetasteApplication`. Chọn cấu hình **UTE Taste - Local Spring Boot**, nạp .env tại Environment variables. Java không tự nạp dotenv từ working directory.
+**IntelliJ / Maven local:** mở pom.xml, chọn JDK 25 cho Project/Importer/Runner; main class `vn.utetaste.UtetasteApplication`. Chọn cấu hình **UTE Taste - Local Spring Boot**, nạp .env tại Environment variables. Java không tự nạp dotenv từ working directory. Nếu IDE đặt tên module khác, chọn lại module chứa main class trong Run Configuration.
 
-Cấu hình local trỏ DB Docker ở 127.0.0.1:5433. Sau khi sao lưu/phê duyệt nếu dùng DB hiện có, dừng app Docker và publish DB bằng `docker compose -f compose.yml -f compose.intellij.yml up -d --no-deps db`; giữ project/volume cũ và bảo đảm cổng 5433 rảnh. Chỉ chạy một app trên 8080. Với PostgreSQL host đã cấu hình DB_URL đúng, có thể chạy `.\scripts\start.ps1`; script nạp .env trước Maven.
+Cấu hình local trỏ DB Docker ở 127.0.0.1:5433. Sau khi sao lưu/phê duyệt nếu dùng DB hiện có, dừng app Docker và publish DB bằng `docker compose -f compose.yml -f compose.intellij.yml up -d --no-deps db`; giữ project/volume cũ và bảo đảm cổng 5433 rảnh. Chỉ chạy một app trên 8080. Với PostgreSQL host đã cấu hình DB_URL đúng, có thể chạy `.\scripts\start.ps1`; script nạp .env trước Maven. Cả start.ps1 và start.sh hỗ trợ UTF-8, CRLF/LF, nháy đơn/đôi một dòng và comment; giá trị được đọc literal, không nội suy biến hoặc thực thi lệnh trong .env.
 
 ## 6. Chạy kiểm thử
 
@@ -99,7 +99,7 @@ Bật Docker để chạy thêm PostgreSQL/Flyway tests trên Testcontainers đ�
 .\mvnw.cmd -B '-DpostgresIT=true' package
 ```
 
-Kiểm script tạo env: `py scripts/check-init-env.py`. Kiểm ánh xạ Compose bằng dữ liệu giả: `node scripts/check-config-mapping.mjs` (cần Node.js). Các kiểm tra này không ghi vào PostgreSQL hiện tại.
+Kiểm script chạy local: `py scripts/check-start-scripts.py` (chạy PowerShell/Bash nếu có). Kiểm script tạo env: `py scripts/check-init-env.py`. Kiểm ánh xạ Compose bằng dữ liệu giả: `node scripts/check-config-mapping.mjs` (cần Node.js). Các kiểm tra này không ghi vào PostgreSQL hiện tại.
 
 ## 7. Lưu ý
 

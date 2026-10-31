@@ -30,7 +30,7 @@ public class OrderService {
     private final AppUserRepository users;
     public record Line(@NotNull Long dishId,@Min(1) @Max(20) int quantity) {}
     public record PlaceRequest(@NotBlank @Pattern(regexp="[0-9a-fA-F-]{36}") String requestKey,
-        @NotEmpty @Size(max=30) List<@Valid Line> items, @Size(max=500) String note) {}
+        @NotEmpty @Size(max=30) List<@NotNull @Valid Line> items, @Size(max=500) String note) {}
     public record ItemView(String name,int quantity,BigDecimal price,BigDecimal total) {}
     public record OrderView(Long id,String code,Long sessionId,String tableLabel,OrderStatus status,String note,OffsetDateTime createdAt,BigDecimal total,List<ItemView> items) {}
     public record TableView(RestaurantTable table,DiningSession session,BigDecimal total,int orderCount) {}
@@ -90,7 +90,7 @@ public class OrderService {
         var o=new FoodOrder();o.setSession(s);o.setCustomer(customer);o.setRequestKey(request.requestKey());o.setNote(request.note()==null?"":request.note().strip());
         Set<Long> seen=new HashSet<>();
         for(var line:request.items()) {
-            if(line.quantity()<1||line.quantity()>20||!seen.add(line.dishId())) throw new BusinessException("Số lượng không hợp lệ hoặc món bị lặp.");
+            if(line==null||line.quantity()<1||line.quantity()>20||!seen.add(line.dishId())) throw new BusinessException("Số lượng không hợp lệ hoặc món bị lặp.");
             var bd=branchDishes.findByBranchIdAndDishId(s.getTable().getBranch().getId(),line.dishId()).orElseThrow(()->new BusinessException("Món không thuộc thực đơn chi nhánh."));
             var d=bd.getDish();if(!d.isActive()||!bd.isAvailable()) throw new BusinessException("Món "+d.getName()+" đã tạm hết. Vui lòng cập nhật giỏ món.");
             var item=new OrderItem();item.setOrder(o);item.setDish(d);item.setDishName(d.getName());item.setUnitPrice(d.getPrice());item.setQuantity(line.quantity());o.getItems().add(item);

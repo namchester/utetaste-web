@@ -73,4 +73,22 @@ class SystemAuditIntegrationTest {
         mvc.perform(post("/api/staff/orders/1/status").cookie(cookie()).with(csrf()).contentType("application/json").content("{broken-secret-value"))
             .andExpect(status().isBadRequest()).andExpect(jsonPath("$.message").value("Dữ liệu yêu cầu không hợp lệ. Hãy kiểm tra kiểu dữ liệu và các trường bắt buộc."));
     }
+
+    @Test void nullOrderLinesReturn400WithoutCreatingOrders() throws Exception {
+        var s=session(branch());
+        var guestCookie=new Cookie("UT_GUEST",jwt.guest(s));
+        mvc.perform(post("/api/guest/orders").with(csrf()).cookie(guestCookie)
+                .contentType("application/json")
+                .content("{\"requestKey\":\""+UUID.randomUUID()+"\",\"items\":[null],\"note\":\"\"}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value("Dữ liệu chưa hợp lệ. Kiểm tra các trường bắt buộc, số lượng và độ dài."));
+        assertThat(orders.findBySessionIdOrderByCreatedAt(s.getId())).isEmpty();
+    }
+    @Test void serviceRejectsNullOrderLinesWithoutPartialWrites() {
+        var s=session(branch());
+        var lines=new ArrayList<>(request().items());lines.add(null);
+        assertThatThrownBy(()->ops.place(guest(s),new OrderService.PlaceRequest(UUID.randomUUID().toString(),lines,"")))
+            .isInstanceOf(BusinessException.class);
+        assertThat(orders.findBySessionIdOrderByCreatedAt(s.getId())).isEmpty();
+    }
 }
