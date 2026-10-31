@@ -19,4 +19,5 @@ Optional<Dish> lockById(@Param("id") Long id);
 @Modifying(flushAutomatically=true,clearAutomatically=true)
 @Query("update Dish d set d.imageUrl=:url,d.imagePublicId=:publicId where d.id=:id")
 int updateImage(@Param("id") Long id,@Param("url") String url,@Param("publicId") String publicId);
+List<Dish> findByNameIgnoreCaseAndCategoryId(String name,Long categoryId);
 }

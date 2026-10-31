@@ -21,11 +21,33 @@ public class AdminService {
     public record TableForm(Long id,@NotNull Long branchId,@NotBlank @Size(max=30) String label,@Min(1) @Max(30) int capacity,boolean active) {}
     public record UserForm(Long id,@NotBlank @Pattern(regexp="[a-zA-Z0-9_.-]{3,60}") String username,@NotBlank @Size(max=100) String fullName,@NotNull Role role,Long branchId,@Size(max=72) String password,boolean active) {}
     public Branch branch(Actor a,BranchForm f) {
-        ops.roles(a,Role.ADMIN);var b=f.id()==null?new Branch():branches.findById(f.id()).orElseThrow();
-        if(!f.active()&&f.id()!=null&&sessions.findByClosedAtIsNull().stream().anyMatch(s->s.getTable().getBranch().getId().equals(f.id()))) throw new BusinessException("Hãy đóng hoặc thanh toán các bàn trước khi ngừng chi nhánh.");
-        b.setName(f.name().strip());b.setAddress(f.address().strip());b.setPhone(f.phone().strip());b.setActive(f.active());branches.save(b);
+        lockAdminForManagement(a);
+        if(f.name()==null||f.name().isBlank()||f.name().strip().length()>100
+            ||f.address()==null||f.address().isBlank()||f.address().strip().length()>255
+            ||f.phone()==null||f.phone().strip().length()>20||!f.phone().strip().matches("\\+?[0-9][0-9 ()-]{0,19}"))
+            throw new BusinessException("Kiểm tra tên, địa chỉ và điện thoại chi nhánh (tối đa 20 ký tự điện thoại).");
+        var b=f.id()==null?new Branch():branches.lockById(f.id()).orElseThrow(()->ManagementException.missing("Chi nhánh không còn tồn tại."));
+        if(f.id()!=null) em.refresh(b);
+        for(var existing:branches.findByNameIgnoreCase(f.name().strip())) {
+            if(Objects.equals(existing.getId(),f.id())) continue;
+            if(f.id()==null&&Objects.equals(existing.getAddress(),f.address().strip())
+                &&Objects.equals(existing.getPhone(),f.phone().strip())&&existing.isActive()==f.active()) return existing;
+            throw ManagementException.conflict("Tên chi nhánh đã tồn tại. Hãy chọn Sửa để cập nhật chi nhánh đó.");
+        }
+        if(!f.active()&&f.id()!=null&&!sessions.findByTableBranchIdAndClosedAtIsNull(f.id()).isEmpty())
+            throw ManagementException.conflict("Hãy đóng hoặc thanh toán các bàn trước khi ngừng chi nhánh.");
+        b.setName(f.name().strip());b.setAddress(f.address().strip());b.setPhone(f.phone().strip());b.setActive(f.active());branches.saveAndFlush(b);
         for(var d:dishes.findAll()) if(availability.findByBranchIdAndDishId(b.getId(),d.getId()).isEmpty()) {var bd=new BranchDish();bd.setBranch(b);bd.setDish(d);availability.save(bd);}
         ops.log(a,"SAVE_BRANCH",b.getName(),b.getId());return b;
+    }
+    public void branchState(Actor a,Long id,boolean active) {
+        lockAdminForManagement(a);
+        var b=branches.lockById(id).orElseThrow(()->ManagementException.missing("Chi nhánh không còn tồn tại."));
+        em.refresh(b);
+        if(b.isActive()==active) return;
+        if(!active&&!sessions.findByTableBranchIdAndClosedAtIsNull(id).isEmpty())
+            throw ManagementException.conflict("Hãy đóng hoặc thanh toán các bàn trước khi ngừng chi nhánh.");
+        b.setActive(active);ops.log(a,"BRANCH_STATE",b.getName()+"="+active,id);
     }
     public void category(Actor a,Long id,String name,int sortOrder) {
         ops.roles(a,Role.ADMIN);if(name==null||name.isBlank()||name.length()>80) throw new BusinessException("Tên danh mục phải từ 1 đến 80 ký tự.");
@@ -49,9 +71,18 @@ public class AdminService {
         for(var dish:selected) {dish.setActive(active);ops.log(a,active?"ENABLE_DISH":"DISABLE_DISH","Món #"+dish.getId()+" • "+dish.getName(),null);}
     }
     public Dish dish(Actor a,DishForm f) {
-        ops.roles(a,Role.ADMIN);if(f.price().stripTrailingZeros().scale()>0) throw new BusinessException("Giá VND phải là số nguyên.");
+        lockAdminForManagement(a);
+        if(f.name()==null||f.name().isBlank()||f.name().strip().length()>120||f.description()==null||f.description().isBlank()||f.description().strip().length()>1000
+            ||f.price()==null||f.price().signum()<=0||f.price().compareTo(BigDecimal.valueOf(10000000))>0||f.categoryId()==null)
+            throw new BusinessException("Kiểm tra tên, mô tả, danh mục và giá món từ 1 đến 10.000.000 VND.");
+        if(f.price().stripTrailingZeros().scale()>0) throw new BusinessException("Giá VND phải là số nguyên.");
         var category=categories.lockById(f.categoryId()).orElseThrow(()->new BusinessException("Danh mục không còn tồn tại."));
-        var d=f.id()==null?new Dish():dishes.lockById(f.id()).orElseThrow();d.setName(f.name().strip());d.setDescription(f.description().strip());d.setPrice(f.price());d.setActive(f.active());d.setCategory(category);dishes.save(d);
+        for(var existing:f.id()==null?dishes.findByNameIgnoreCaseAndCategoryId(f.name().strip(),category.getId()):List.<Dish>of()) {
+            if(existing.getPrice().compareTo(f.price())==0&&Objects.equals(existing.getDescription(),f.description().strip())&&existing.isActive()==f.active()) return existing;
+        }
+        var d=f.id()==null?new Dish():dishes.lockById(f.id()).orElseThrow(()->ManagementException.missing("Món không còn tồn tại."));
+        if(f.id()!=null) em.refresh(d);
+        d.setName(f.name().strip());d.setDescription(f.description().strip());d.setPrice(f.price());d.setActive(f.active());d.setCategory(category);dishes.save(d);
         for(var b:branches.findAll()) if(availability.findByBranchIdAndDishId(b.getId(),d.getId()).isEmpty()) {var bd=new BranchDish();bd.setBranch(b);bd.setDish(d);availability.save(bd);}
         ops.log(a,"SAVE_DISH",d.getName(),null);return d;
     }
@@ -63,7 +94,7 @@ public class AdminService {
             if(!t.getBranch().getId().equals(f.branchId())) throw new BusinessException("Không chuyển chi nhánh của bàn đã tạo.");
             if(!f.active()&&sessions.findByTableIdAndClosedAtIsNull(t.getId()).isPresent()) throw new BusinessException("Bàn đang có khách, chưa thể ngừng sử dụng.");
         }
-        t.setBranch(branches.findById(f.branchId()).orElseThrow());t.setLabel(f.label().strip());t.setCapacity(f.capacity());t.setActive(f.active());tables.save(t);ops.log(a,"SAVE_TABLE",t.getLabel(),f.branchId());
+        var branch=branches.lockById(f.branchId()).orElseThrow();em.refresh(branch);t.setBranch(branch);t.setLabel(f.label().strip());t.setCapacity(f.capacity());t.setActive(f.active());tables.save(t);ops.log(a,"SAVE_TABLE",t.getLabel(),f.branchId());
     }
     public void rotateQr(Actor a,Long id) {
         ops.roles(a,Role.ADMIN,Role.MANAGER);var t=tables.lockById(id).orElseThrow();ops.checkBranch(a,t.getBranch().getId());
@@ -96,7 +127,9 @@ public class AdminService {
         u.setActive(active);u.setTokenVersion(u.getTokenVersion()+1);
         ops.log(a,active?"ENABLE_USER":"DISABLE_USER",u.getUsername(),u.getBranch()==null?null:u.getBranch().getId());
     }
-    private void guardStaffMutation(Actor a) {
+    private void guardStaffMutation(Actor a) { lockAdminForManagement(a); }
+    public void lockAdminForManagement(Actor a) {
+        ops.roles(a,Role.ADMIN);
         // Every staff mutation acquires the ADMIN rows in one order before its target.
         // Refresh after waiting: the request principal may have been demoted concurrently.
         var admins=users.lockAdmins();admins.forEach(em::refresh);

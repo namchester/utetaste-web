@@ -10,4 +10,10 @@ public interface BranchDishRepository extends JpaRepository<BranchDish,Long> {
 Set<Long> availableIds(@Param("branch") Long branch,@Param("ids") List<Long> ids);
 List<BranchDish> findByBranchIdOrderByDishName(Long branchId);
 Optional<BranchDish> findByBranchIdAndDishId(Long branchId, Long dishId);
+@Modifying(flushAutomatically=true)
+@Query("delete from BranchDish b where b.branch.id=:id")
+int removeForBranch(@Param("id") Long id);
+@Modifying(flushAutomatically=true)
+@Query("delete from BranchDish b where b.dish.id=:id")
+int removeForDish(@Param("id") Long id);
 }

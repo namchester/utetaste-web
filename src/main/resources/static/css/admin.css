@@ -1,8 +1,8 @@
 .admin-filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;align-items:end;margin-bottom:20px}
 .admin-filters label{font-size:.875rem;font-weight:600;display:block}
 .admin-filters .form-control,.admin-filters .form-select{margin-top:6px}
-.catalog-filter-actions,.catalog-row-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
-.catalog-filter-actions .btn,.catalog-row-actions .btn{flex:0 0 auto;white-space:nowrap}
+.catalog-filter-actions,.catalog-row-actions,.management-actions{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.catalog-filter-actions .btn,.catalog-row-actions .btn,.management-actions .btn{flex:0 0 auto;white-space:nowrap}
 .admin-summary{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:12px 0}
 .admin-paging{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap;margin-top:16px}
 .category-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border,#ddd);padding:18px 0}
@@ -26,3 +26,16 @@
 
 .dish-bulk-toolbar{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin-bottom:16px}.dish-bulk-toolbar label{display:grid;gap:6px;font-size:.875rem;font-weight:600;flex:0 1 200px;min-width:160px}.dish-bulk-toolbar .form-select{width:100%;padding-right:40px}.dish-bulk-toolbar [data-dish-selection-count]{align-self:center}.dish-bulk-toolbar .btn{white-space:normal}
 @media(max-width:420px){.dish-bulk-toolbar{align-items:stretch}.dish-bulk-toolbar label,.dish-bulk-toolbar .btn{flex:1 1 100%;min-width:0}}
+
+.management-actions form{margin:0}
+.management-actions .btn,.catalog-row-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px}
+.management-icon{width:16px;height:16px;flex:0 0 16px}
+.branch-row>.management-actions{flex:0 1 auto;min-width:0}
+.branch-row h3,.branch-row p{overflow-wrap:anywhere}
+.removal-results{padding:14px;border:1px solid var(--border,#ddd);border-radius:12px;margin-bottom:16px;overflow-wrap:anywhere}
+.removal-results li{margin:8px 0}.removal-results li span{display:block}
+@media(max-width:700px){.branch-row>.management-actions{flex-basis:100%}.branch-row>.management-actions .btn{white-space:normal}}
+
+.catalog-row-actions{flex-wrap:nowrap}
+.catalog-grid td:nth-child(3){white-space:nowrap}
+@media(min-width:1200px){.admin-grid.catalog-grid{grid-template-columns:minmax(0,2.4fr) minmax(280px,1fr)}}

@@ -7,4 +7,5 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 public interface OrderItemRepository extends JpaRepository<OrderItem,Long> {
 
+boolean existsByDishId(Long dishId);
 }

@@ -192,7 +192,7 @@ async function auditResponsive(name) {
     const metrics = await evaluate('({width:innerWidth,scroll:document.documentElement.scrollWidth})');
     if (metrics.scroll > metrics.width + 1) {record.failures.push(width);responsiveFailures.push({name,width,...metrics});}
     else checks.push('Audit '+name+' '+width+'px has no horizontal overflow');
-    const spaced = await evaluate('(()=>[...document.querySelectorAll(".button-actions,.cart-links,.catalog-row-actions,.catalog-filter-actions")].every(group=>{const [a,b]=[...group.children].map(el=>el.getBoundingClientRect());return !a||!b||Math.max(b.left-a.right,b.top-a.bottom)>=9.9}))()');
+    const spaced = await evaluate('(()=>[...document.querySelectorAll(".button-actions,.cart-links,.catalog-row-actions,.catalog-filter-actions,.management-actions")].every(group=>{const boxes=[...group.children].filter(el=>el.getClientRects().length).map(el=>el.getBoundingClientRect());return boxes.every((a,i)=>boxes.slice(i+1).every(b=>Math.max(b.left-a.right,a.left-b.right,b.top-a.bottom,a.top-b.bottom)>=9.9))}))()');
     if (!spaced) {record.failures.push(width);responsiveFailures.push({name,width,reason:'Action buttons touch'});}
     const screenshot = await command('Page.captureScreenshot',{format:'png'});
     fs.writeFileSync(path.join(output,'audit-'+name+'-'+width+'.png'),Buffer.from(screenshot.data,'base64'));
@@ -306,7 +306,44 @@ try {
   await check('Staff unlock restores active state', 'document.querySelector("tbody").textContent.includes('+JSON.stringify(staffName)+')');
   await layout('admin-staff-filter-mobile',390,844);
   if (auditMode) {const edit=await evaluate('document.querySelector("tbody a[href*=edit]").getAttribute("href")');await navigate(edit);await layout('staff-edit',390,844);}
+  // CRUD is exercised only against the private H2 preview created by this script.
+  await navigate('/admin/branches');
+  const demoBranch = 'QA-branch-' + Date.now();
+  await evaluate('document.querySelector("#branch-name").value='+JSON.stringify(demoBranch)+';document.querySelector("#address").value="Địa chỉ demo";document.querySelector("#phone").value="0901234567"');
+  await check('Branch phone format passes native validation','document.querySelector("#phone").checkValidity()');
+  await submit(query('#branch-name')+'.form.requestSubmit()');
+  const demoBranchId = await evaluate('[...document.querySelectorAll("[data-branch-id]")].find(row=>row.querySelector("h3").textContent==='+JSON.stringify(demoBranch)+').dataset.branchId');
+  const demoBranchRow = '[data-branch-id="'+demoBranchId+'"]';
+  await navigate('/admin/branches?edit='+demoBranchId);
+  await check('Branch edit loads the existing id and explicitly names the branch','document.querySelector("#branch-name").value==='+JSON.stringify(demoBranch)+' && document.querySelector("#branch-name").form.querySelector("[name=id]").value==='+JSON.stringify(demoBranchId)+' && document.querySelector("#branch-name").form.textContent.includes("Lưu thay đổi")');
+  await layout('branch-crud-edit',390,844);
+  await evaluate('document.querySelector("#address").value="Địa chỉ đã sửa"');
+  await submit(query('#branch-name')+'.form.requestSubmit()');
+  await check('Editing branch updates its original row, without duplication',query(demoBranchRow)+'.textContent.includes("Địa chỉ đã sửa") && [...document.querySelectorAll("[data-branch-id] h3")].filter(h=>h.textContent==='+JSON.stringify(demoBranch)+').length===1');
+  for (const [action,label] of [['stop','Ngừng hoạt động'],['start','Đang hoạt động']]) {
+    await evaluate(query(demoBranchRow+' form[action$="/state"]')+'.requestSubmit()');
+    await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'branch state confirmation');
+    await submit(query('[data-confirm-accept]')+'.click()');
+    await check('Branch state '+action+' persists',query(demoBranchRow)+'.querySelector(".mini-tag").textContent==='+JSON.stringify(label));
+  }
+  await evaluate(query(demoBranchRow+' form[data-admin-delete]')+'.requestSubmit()');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'named branch deletion modal');
+  await check('Delete modal names the branch and warns about consequences','document.querySelector(".modal.show").textContent.includes('+JSON.stringify(demoBranch)+') && document.querySelector("[data-confirm-accept]").textContent==="Xác nhận xóa"');
+  await layout('branch-delete-confirm',390,844);
+  await evaluate(query('.modal.show [data-bs-dismiss]')+'.click()');
+  await waitFor(()=>evaluate('!document.querySelector(".modal.show")'),'branch cancel');
+  await check('Cancel branch deletion preserves row',query(demoBranchRow)+'!==null');
+  await evaluate(query(demoBranchRow+' form[data-admin-delete]')+'.requestSubmit()');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'branch deletion confirmation');
+  await submit(query('[data-confirm-accept]')+'.click()');
+  await check('Confirmed deletion removes only the new empty demo branch',query(demoBranchRow)+'===null && !!document.querySelector(".alert-success")');
+  await evaluate(query('[data-branch-id] form[data-admin-delete]')+'.requestSubmit()');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'linked branch delete confirmation');
+  await submit(query('[data-confirm-accept]')+'.click()');
+  await check('Linked branch delete is rejected with explicit alternative','document.querySelectorAll("[data-branch-id]").length===2 && document.querySelector(".alert-danger").textContent.includes("Ngừng hoạt động")');
+
   await navigate('/admin/menu'); await layout('admin-menu-desktop', 1440, 1000);
+  await check('Three dish actions share touch height and accessible delete label','[...document.querySelectorAll(".catalog-row-actions")].every(group=>{const buttons=[...group.querySelectorAll(".btn")];return buttons.length===3&&buttons.every(button=>button.getBoundingClientRect().height>=40&&button.getBoundingClientRect().height===buttons[0].getBoundingClientRect().height)&&buttons[2].getAttribute("aria-label").startsWith("Xóa món ")})');
   await check('Dish bulk action text fits without clipping', '(()=>{const s=document.querySelector("#bulk-active"),style=getComputedStyle(s),c=document.createElement("canvas").getContext("2d");c.font=style.font;return s.labels[0].textContent.includes("Với món đã chọn")&&c.measureText(s.selectedOptions[0].text).width+parseFloat(style.paddingLeft)+parseFloat(style.paddingRight)<=s.clientWidth})()');
   await check('Bulk update is disabled until a dish is selected', 'document.querySelector("[data-bulk-submit]").disabled && document.querySelector("[data-dish-selection-count]").textContent==="Đã chọn 0 món"');
   await layout('admin-menu-toolbar-mobile',320,844);
@@ -331,6 +368,27 @@ try {
   await submit(query('[data-confirm-accept]') + '.click()');
   await check('Confirmed empty category deletion persists', '!(' + categoryRow + ')');
   await check('Linked categories expose counts and prevent deletion', '[...document.querySelectorAll(".category-row")].every(row=>row.querySelector("form[action$=delete] button").disabled)');
+  await navigate('/admin/menu');
+  const demoDish = 'QA-delete-' + Date.now();
+  await navigate('/admin/menu');
+  await evaluate('document.querySelector("#dish-name").value='+JSON.stringify(demoDish)+';document.querySelector("#price").value="11000";document.querySelector("#description").value="Món kiểm thử riêng"');
+  await submit(query('#dish-name')+'.form.requestSubmit()');
+  await navigate('/admin/menu?q='+encodeURIComponent(demoDish));
+  const deleteId=await evaluate(query('#dish-bulk input[name=ids]')+'.value');
+  await evaluate(query('#dish-delete-'+deleteId)+'.requestSubmit()');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'dish delete modal');
+  await check('Dish delete modal names its target and retains Cloudinary','document.querySelector(".modal.show").textContent.includes('+JSON.stringify(demoDish)+') && document.querySelector(".modal.show").textContent.includes("Cloudinary")');
+  await layout('dish-delete-confirm',390,844);
+  await evaluate(query('.modal.show [data-bs-dismiss]')+'.click()');
+  await waitFor(()=>evaluate('!document.querySelector(".modal.show")'),'cancel dish deletion');
+  await check('Cancel dish deletion leaves the row',query('#dish-delete-'+deleteId)+'!==null');
+  await evaluate(query('#dish-delete-'+deleteId)+'.requestSubmit()');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'dish delete modal again');
+  await submit(query('[data-confirm-accept]')+'.click()');
+  await check('Single deletion reports successful removal', '!!document.querySelector(".removal-results") && document.querySelector(".removal-results").textContent.includes('+JSON.stringify('Đã xóa: '+demoDish)+')');
+  await navigate('/admin/menu?q='+encodeURIComponent(demoDish));
+  await check('Deleted demo dish disappears from filtered server results','document.querySelectorAll("#dish-bulk tbody tr").length===0 && document.querySelector("[data-bulk-delete]").disabled');
+
   await navigate('/admin/menu');
   const toggleId = await evaluate('document.querySelector("input[name=ids]").value');
   await evaluate('document.querySelector("#dish-bulk input[name=ids]").click()');
@@ -472,6 +530,26 @@ try {
   await navigate('/staff/reports');await layout('admin-report-desktop',1440,1000);await layout('admin-report-mobile',390,844);
   await check('Reports show paid invoice, average and payment methods after checkout','document.querySelectorAll(".admin-kpis .stat-card").length===4 && document.querySelector(".admin-kpis").textContent.includes("Trung bình") && document.querySelector("main").textContent.includes("So sánh chi nhánh") && document.querySelector("main").textContent.includes("Chuyển khoản") && !!document.querySelector("a[href*=receipt]")');
   await check('CSV download has BOM, branch column and paid receipt', 'fetch(document.querySelector("a[href*=export]").href).then(async r=>({ok:r.ok,bytes:new Uint8Array(await r.arrayBuffer())})).then(r=>r.ok&&r.bytes[0]===239&&r.bytes[1]===187&&r.bytes[2]===191&&new TextDecoder().decode(r.bytes).includes("Chi nhánh")&&new TextDecoder().decode(r.bytes).includes("CASH"))');
+  // Preserve the paid order's dish while deleting a new unused dish in the same request.
+  const bulkDish='QA-bulk-'+Date.now();
+  await navigate('/admin/menu');
+  await evaluate('document.querySelector("#dish-name").value='+JSON.stringify(bulkDish)+';document.querySelector("#price").value="12000";document.querySelector("#description").value="Món xóa nhiều"');
+  await submit(query('#dish-name')+'.form.requestSubmit()');
+  await navigate('/admin/menu?size=50');
+  const bulkId=await evaluate('[...document.querySelectorAll("#dish-bulk tbody tr")].find(row=>row.textContent.includes('+JSON.stringify(bulkDish)+')).querySelector("[name=ids]").value');
+  const usedId=String(requestPattern.items[0].dishId);
+  await evaluate('[...document.querySelectorAll("#dish-bulk input[name=ids]")].filter(x=>'+JSON.stringify([bulkId,usedId])+'.includes(x.value)).forEach(x=>x.click())');
+  await check('Bulk deletion selects only explicit current-page ids','document.querySelectorAll("#dish-bulk input[name=ids]:checked").length===2 && document.querySelector("[data-dish-selection-count]").textContent==="Đã chọn 2 món"');
+  await evaluate(query('#dish-bulk')+'.requestSubmit(document.querySelector("[data-bulk-delete]"))');
+  await waitFor(()=>evaluate('!!document.querySelector(".modal.show")'),'mixed bulk confirmation');
+  await check('Bulk delete confirmation shows count and consequences','document.querySelector(".modal.show").textContent.includes("Xóa 2 món") && document.querySelector(".modal.show").textContent.includes("Favorites")');
+  await layout('dish-bulk-delete-confirm',390,844);
+  await submit(query('[data-confirm-accept]')+'.click()');
+  await check('Partial bulk deletion displays both removed and retained reasons','document.querySelector(".removal-results").textContent.includes("Đã xóa:") && document.querySelector(".removal-results").textContent.includes("Giữ lại:") && document.querySelector(".removal-results").textContent.includes("lịch sử")');
+  await layout('dish-bulk-delete-results',390,844);
+  await navigate('/admin/menu?size=50');
+  await check('Mixed bulk keeps all unselected dishes and the paid dish','document.querySelectorAll("#dish-bulk tbody tr").length===10 && !!document.querySelector("#dish-bulk input[name=ids][value=\\"'+usedId+'\\"]") && !document.querySelector("#dish-bulk input[name=ids][value=\\"'+bulkId+'\\"]")');
+
   if (auditMode) {
     for (const [username,urls] of [['manager2',['/staff','/staff/tables','/staff/menu','/staff/reports']],['waiter2',['/staff','/staff/tables','/staff/orders']],['chef2',['/staff/kitchen']]]) {
       await submit(query('.logout-form')+'.requestSubmit()');

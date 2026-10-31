@@ -8,4 +8,5 @@ import org.springframework.data.repository.query.Param;
 public interface AuditLogRepository extends JpaRepository<AuditLog,Long>, JpaSpecificationExecutor<AuditLog> {
 List<AuditLog> findTop100ByOrderByCreatedAtDesc();
 List<AuditLog> findByDetailAndActionInOrderByCreatedAtAscIdAsc(String detail,List<String> actions);
+boolean existsByBranchIdAndActionNotIn(Long branchId,List<String> actions);
 }

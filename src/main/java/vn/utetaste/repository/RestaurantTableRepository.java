@@ -11,4 +11,5 @@ long activeCount(@Param("branch") Long branch);
 @EntityGraph(attributePaths={"branch"}) List<RestaurantTable> findByBranchIdOrderByLabel(Long branchId);
 Optional<RestaurantTable> findByQrKey(String qrKey);
 @Lock(LockModeType.PESSIMISTIC_WRITE) @Query("select t from RestaurantTable t where t.id = :id") Optional<RestaurantTable> lockById(@Param("id") Long id);
+boolean existsByBranchId(Long branchId);
 }

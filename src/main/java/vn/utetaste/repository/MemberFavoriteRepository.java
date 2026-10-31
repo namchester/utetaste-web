@@ -11,4 +11,5 @@ public interface MemberFavoriteRepository extends JpaRepository<MemberFavorite,L
     Page<MemberFavorite> findByUserIdOrderByCreatedAtDescIdDesc(Long userId,Pageable pageable);
     @Query("select f.dish.id from MemberFavorite f where f.user.id=:user and f.dish.id in :ids")
     Set<Long> selected(@Param("user") Long user,@Param("ids") List<Long> ids);
+boolean existsByDishId(Long dishId);
 }

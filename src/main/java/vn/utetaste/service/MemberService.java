@@ -90,7 +90,7 @@ public class MemberService {
         var u=user(a,true);var existing=favorites.findByUserIdAndDishId(u.getId(),dishId);
         if(!selected){existing.ifPresent(favorites::delete);return;}
         if(existing.isPresent())return;
-        var dish=dishes.findById(dishId).orElseThrow(()->new BusinessException("Món không tồn tại."));
+        var dish=dishes.lockById(dishId).orElseThrow(()->new BusinessException("Món không tồn tại."));em.refresh(dish);
         if(!dish.isActive())throw new BusinessException("Món đã ngừng bán, chưa thể lưu mới.");
         var f=new MemberFavorite();f.setUser(u);f.setDish(dish);favorites.saveAndFlush(f);
     }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import vn.utetaste.security.Actor;
 import vn.utetaste.service.BusinessException;
+import vn.utetaste.service.ManagementException;
 @ControllerAdvice
 public class WebAdvice {
     @Value("${app.seed-demo}") boolean demo;
@@ -22,9 +23,15 @@ public class WebAdvice {
         if(req.getRequestURI().startsWith("/api/")) return ResponseEntity.badRequest().body(Map.of("message",msg));
         response.setStatus(400);m.addAttribute("message",msg);m.addAttribute("code",400);return "error";
     }
+    @ExceptionHandler(org.springframework.dao.ConcurrencyFailureException.class)
+    Object conflict(Exception e,HttpServletRequest req,Model m,jakarta.servlet.http.HttpServletResponse response) {
+        String msg="Dữ liệu vừa được thay đổi bởi yêu cầu khác. Hãy tải lại và thử lại.";
+        if(req.getRequestURI().startsWith("/api/")) return ResponseEntity.status(409).body(Map.of("message",msg));
+        response.setStatus(409);m.addAttribute("message",msg);m.addAttribute("code",409);return "error";
+    }
     @ExceptionHandler({BusinessException.class,NoSuchElementException.class,DataIntegrityViolationException.class,MethodArgumentNotValidException.class,MaxUploadSizeExceededException.class,AccessDeniedException.class})
     Object error(Exception e,HttpServletRequest req,Model m,jakarta.servlet.http.HttpServletResponse response) {
-        int status=e instanceof AccessDeniedException?403:400;
+        int status=e instanceof AccessDeniedException?403:e instanceof ManagementException me?(me.kind()==ManagementException.Kind.NOT_FOUND?404:409):400;
         String msg=e instanceof BusinessException||e instanceof AccessDeniedException?e.getMessage():e instanceof DataIntegrityViolationException?"Dữ liệu bị trùng hoặc đang được sử dụng. Kiểm tra tên tài khoản, danh mục hoặc số bàn.":e instanceof MaxUploadSizeExceededException?"Ảnh vượt giới hạn 5 MB.":e instanceof MethodArgumentNotValidException?"Dữ liệu chưa hợp lệ. Kiểm tra các trường bắt buộc, số lượng và độ dài.":"Không tìm thấy dữ liệu yêu cầu.";
         if(req.getRequestURI().startsWith("/api/")) return ResponseEntity.status(status).body(Map.of("message",msg));
         response.setStatus(status);m.addAttribute("message",msg);m.addAttribute("code",status);return "error";

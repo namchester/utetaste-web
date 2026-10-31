@@ -18,6 +18,7 @@ import vn.utetaste.security.MemberIdentity;
 @Service @RequiredArgsConstructor @Transactional
 public class OrderService {
     private final BranchRepository branches;
+    private final DishRepository dishes;
     private final RestaurantTableRepository tables;
     private final DiningSessionRepository sessions;
     private final FoodOrderRepository orders;
@@ -52,7 +53,8 @@ public class OrderService {
         roles(a,Role.ADMIN,Role.MANAGER,Role.WAITER);
         var t=tables.lockById(tableId).orElseThrow(()->new BusinessException("Không tìm thấy bàn."));
         checkBranch(a,t.getBranch().getId());
-        if(!t.isActive()||!t.getBranch().isActive()) throw new BusinessException("Bàn hoặc chi nhánh đang ngừng hoạt động.");
+        var branch=branches.lockById(t.getBranch().getId()).orElseThrow();em.refresh(branch);
+        if(!t.isActive()||!branch.isActive()) throw new BusinessException("Bàn hoặc chi nhánh đang ngừng hoạt động.");
         var existing=sessions.findByTableIdAndClosedAtIsNull(tableId);
         if(existing.isPresent()) return existing.get();
         var s=new DiningSession();s.setTable(t);sessions.save(s);
@@ -90,9 +92,16 @@ public class OrderService {
         var o=new FoodOrder();o.setSession(s);o.setCustomer(customer);o.setRequestKey(request.requestKey());o.setNote(request.note()==null?"":request.note().strip());
         Set<Long> seen=new HashSet<>();
         for(var line:request.items()) {
-            if(line==null||line.quantity()<1||line.quantity()>20||!seen.add(line.dishId())) throw new BusinessException("Số lượng không hợp lệ hoặc món bị lặp.");
+            if(line==null||line.dishId()==null||line.quantity()<1||line.quantity()>20||!seen.add(line.dishId())) throw new BusinessException("Số lượng không hợp lệ hoặc món bị lặp.");
+        }
+        Map<Long,Dish> locked=new HashMap<>();
+        for(Long id:seen.stream().sorted().toList()) {
+            var dish=dishes.lockById(id).orElseThrow(()->new BusinessException("Món không còn tồn tại. Vui lòng cập nhật giỏ món."));
+            em.refresh(dish);locked.put(id,dish);
+        }
+        for(var line:request.items()) {
             var bd=branchDishes.findByBranchIdAndDishId(s.getTable().getBranch().getId(),line.dishId()).orElseThrow(()->new BusinessException("Món không thuộc thực đơn chi nhánh."));
-            var d=bd.getDish();if(!d.isActive()||!bd.isAvailable()) throw new BusinessException("Món "+d.getName()+" đã tạm hết. Vui lòng cập nhật giỏ món.");
+            var d=locked.get(line.dishId());if(!d.isActive()||!bd.isAvailable()) throw new BusinessException("Món "+d.getName()+" đã tạm hết. Vui lòng cập nhật giỏ món.");
             var item=new OrderItem();item.setOrder(o);item.setDish(d);item.setDishName(d.getName());item.setUnitPrice(d.getPrice());item.setQuantity(line.quantity());o.getItems().add(item);
         }
         orders.saveAndFlush(o);log(a,"PLACE_ORDER",o.getCode(),s.getTable().getBranch().getId());emit(s,"orders.changed");return view(o);

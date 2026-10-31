@@ -18,4 +18,5 @@ Optional<AppUser> lockById(@Param("id") Long id);
 List<AppUser> findAllByOrderById();
 @Query("select count(u) from AppUser u where u.active=true and u.role in :roles and (:branch is null or u.branch.id=:branch)")
 long activeStaff(@Param("branch") Long branch,@Param("roles") List<Role> roles);
+boolean existsByBranchId(Long branchId);
 }

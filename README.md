@@ -23,6 +23,15 @@ UTE Taste là ứng dụng web hỗ trợ quản lý chuỗi nhà hàng và đ�
 
 Điểm thành viên hiện có sổ điểm và giao diện đọc; chưa bật cộng điểm tự động vì hóa đơn chung chưa xác định người trả/phân bổ tiền. Chưa tích hợp cổng ngân hàng hoặc quy đổi điểm.
 
+### Quản trị chi nhánh và thực đơn an toàn
+
+- Tại `/admin/branches`, ADMIN có thể thêm, sửa, ngừng hoạt động, kích hoạt lại và xóa chi nhánh trống. Gửi lặp cùng biểu mẫu thêm chi nhánh không tạo bản ghi mới.
+- Không xóa chi nhánh có nhân viên, bàn hoặc lịch sử vận hành. Phiên bàn, đơn hàng, hóa đơn và doanh thu được giữ nguyên; muốn ngừng hoạt động phải đóng/thanh toán các phiên đang mở trước.
+- Tại `/admin/menu`, ADMIN có thể xóa một món hoặc chọn các món trên **trang hiện tại** để xóa nhiều. Tối đa 100 ID/request; backend kiểm tra từng món trong transaction riêng và báo kết quả từng món.
+- Món có chi tiết đơn ở bất kỳ trạng thái nào (kể cả đã hủy) hoặc Favorites được giữ lại. Admin có thể chủ động chọn **Ngừng bán**; xóa bị chặn không tự đổi trạng thái bán.
+- Chỉ các liên kết cấu hình thực đơn chi nhánh của bản ghi đủ điều kiện mới được dọn. Không xóa danh mục, dữ liệu nghiệp vụ, audit log hoặc ảnh Cloudinary.
+- Giỏ QR lưu ở trình duyệt có thể còn món đã xóa/ngừng bán; server từ chối khi gửi và yêu cầu khách cập nhật giỏ. Giá trong đơn cũ không thay đổi.
+
 ## 4. Yêu cầu hệ thống
 
 - Windows 11, Git, Docker Desktop với Docker Compose; Docker Engine phải hoạt động.
@@ -108,3 +117,14 @@ Kiểm script chạy local: `py scripts/check-start-scripts.py` (chạy PowerShe
 - Cloudinary là tùy chọn: tự cấu hình CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET để upload ảnh thật. Chưa cấu hình vẫn dùng ảnh cục bộ; mock/preview không chứng minh upload dịch vụ thật.
 - Flyway tự chạy khi startup, Hibernate validate schema; không sửa migration đã áp dụng hoặc reset DB để vượt lỗi. **Không dùng docker compose down -v khi cần giữ dữ liệu PostgreSQL.**
 - Ảnh minh họa có nguồn và giấy phép riêng; giữ trang [ghi công ảnh](src/main/resources/static/images/food/credits.html) và metadata đi kèm. Có thể xem tại /images/food/credits.html khi web chạy.
+
+## 8. Demo CRUD trên dữ liệu thử
+
+Dùng bản clone và PostgreSQL test độc lập; không thực hiện xóa chi nhánh/món đang vận hành. ADMIN đăng nhập bằng mật khẩu tự cấu hình, không có mật khẩu mặc định công khai.
+
+1. Tạo **Chi nhánh DEMO CRUD** với địa chỉ/điện thoại hợp lệ; chọn Sửa, đổi địa chỉ, Lưu thay đổi. Kiểm tra ID không đổi. Thử Ngừng hoạt động rồi Kích hoạt lại.
+2. Nhấn Xóa, đọc tên trong modal rồi Hủy để kiểm tra bản ghi còn nguyên; xác nhận lại để xóa chi nhánh vừa tạo, chưa có nhân viên/bàn.
+3. Tạo **Món DEMO CRUD**; sửa giá/mô tả, thử Ngừng bán/Bật bán. Xóa riêng món mới chưa có đơn/Favorites.
+4. Trong môi trường test, tạo hai món mới; lưu một món vào Favorites hoặc đặt món đó qua QR. Chọn cả hai rồi Xóa các món đã chọn: món chưa dùng bị xóa, món có liên kết được giữ lại kèm lý do. Kiểm tra đơn/Favorites/phiếu cũ còn nguyên.
+
+Sau Maven package, có thể chạy Chrome tự động bằng `node scripts/check-ui.mjs --audit` (Node.js và Chrome cần cài trên máy). Script tự mở H2 riêng và SMTP giả lập trên loopback, không đọc .env và không dùng PostgreSQL hiện tại. Kết quả/ảnh nằm trong `target/ui-check/`; đây không phải nghiệm thu Gmail hoặc Cloudinary thật.

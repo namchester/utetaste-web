@@ -1,1 +1,48 @@
-<!doctype html><html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"><head th:replace="~{fragments/layout :: head('Quản lý chi nhánh')}"></head><body data-live="staff"><a class="skip-link" href="#main-content">Đi đến nội dung chính</a><aside th:replace="~{fragments/layout :: sidebar}"></aside><div class="workspace"><header th:replace="~{fragments/layout :: topbar}"></header><main class="page-content" id="main-content" tabindex="-1"><div th:replace="~{fragments/layout :: flash}"></div><div class="page-heading"><div><span class="eyebrow">CÙNG MỘT THƯƠNG HIỆU, NHIỀU ĐIỂM HẸN</span><h1>Chi nhánh</h1><p>Quản lý thông tin và trạng thái phục vụ toàn chuỗi.</p></div></div><div class="admin-grid"><section class="panel"><h2>Danh sách chi nhánh</h2><article class="branch-row" th:each="b:${branches}"><span class="location-icon">⌂</span><div><h3 th:text="${b.name}"></h3><p th:text="${b.address}"></p><small th:text="${b.phone}"></small><span class="mini-tag ms-2" th:text="${b.active ? 'Đang hoạt động' : 'Tạm ngừng'}"></span></div><a class="btn btn-outline-dark btn-sm" th:href="@{/admin/branches(edit=${b.id})}">Sửa</a></article></section><section class="panel"><h2 th:text="${editing == null ? 'Thêm chi nhánh' : 'Sửa chi nhánh'}"></h2><form th:action="@{/admin/branches}" method="post"><input type="hidden" name="id" th:value="${editing?.id}"><label class="form-label" for="branch-name">Tên chi nhánh</label><input class="form-control" id="branch-name" name="name" th:value="${editing?.name}" maxlength="100" required><label class="form-label mt-3" for="address">Địa chỉ</label><input class="form-control" id="address" name="address" th:value="${editing?.address}" maxlength="255" required><label class="form-label mt-3" for="phone">Điện thoại</label><input class="form-control" id="phone" name="phone" th:value="${editing?.phone}" maxlength="20" required><label class="form-check mt-3"><input class="form-check-input" type="checkbox" name="active" value="true" th:checked="${editing == null or editing.active}"> Đang hoạt động</label><div class="d-flex gap-2 mt-4"><button class="btn btn-primary">Lưu chi nhánh</button><a class="btn btn-light" href="/admin/branches">Tạo mới</a></div></form></section></div></main></div><div th:replace="~{fragments/layout :: scripts}"></div></body></html>
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Quản lý chi nhánh')}"></head>
+<body data-live="staff">
+<a class="skip-link" href="#main-content">Đi đến nội dung chính</a>
+<aside th:replace="~{fragments/layout :: sidebar}"></aside>
+<div class="workspace">
+<header th:replace="~{fragments/layout :: topbar}"></header>
+<main class="page-content" id="main-content" tabindex="-1">
+<div th:replace="~{fragments/layout :: flash}"></div>
+<div class="page-heading"><div><span class="eyebrow">CÙNG MỘT THƯƠNG HIỆU, NHIỀU ĐIỂM HẸN</span><h1>Chi nhánh</h1><p>Quản lý thông tin và trạng thái phục vụ toàn chuỗi.</p></div></div>
+<div class="admin-grid">
+<section class="panel">
+<h2>Danh sách chi nhánh</h2>
+<p class="small text-muted">Chỉ xóa chi nhánh chưa có nhân viên, bàn hoặc lịch sử vận hành. Với chi nhánh đã sử dụng, hãy ngừng hoạt động sau khi đóng các bàn.</p>
+<p class="empty-state" th:if="${#lists.isEmpty(branches)}">Chưa có chi nhánh. Thêm chi nhánh đầu tiên bằng biểu mẫu bên cạnh.</p>
+<article class="branch-row" th:each="b:${branches}" th:attr="data-branch-id=${b.id}">
+<span class="location-icon" aria-hidden="true">⌂</span>
+<div><h3 th:text="${b.name}"></h3><p th:text="${b.address}"></p><small th:text="${b.phone}"></small><span class="mini-tag ms-2" th:text="${b.active ? 'Đang hoạt động' : 'Ngừng hoạt động'}"></span></div>
+<div class="management-actions" role="group" th:attr="aria-label=${'Thao tác với '+b.name}">
+<a class="btn btn-outline-dark btn-sm" th:href="@{/admin/branches(edit=${b.id})}">Sửa</a>
+<form th:action="@{/admin/branches/{id}/state(id=${b.id})}" method="post" th:attr="data-admin-confirm=${(b.active ? 'Ngừng hoạt động ' : 'Kích hoạt lại ')+b.name+'? Lịch sử được giữ nguyên. Chỉ ngừng khi không còn phiên bàn đang mở.'}">
+<input type="hidden" name="active" th:value="${!b.active}">
+<button class="btn btn-light btn-sm" th:text="${b.active ? 'Ngừng hoạt động' : 'Kích hoạt lại'}"></button>
+</form>
+<form th:action="@{/admin/branches/{id}/delete(id=${b.id})}" method="post" data-admin-delete th:attr="data-admin-confirm=${'Xóa chi nhánh '+b.name+'? Không thể khôi phục bản ghi đã xóa. Hệ thống chỉ xóa chi nhánh trống; giữ nguyên dữ liệu phụ thuộc và nhật ký.'}">
+<button class="btn btn-outline-danger btn-sm" th:attr="aria-label=${'Xóa chi nhánh '+b.name}"><svg class="management-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></svg>Xóa</button>
+</form>
+</div>
+</article>
+</section>
+<section class="panel">
+<h2 th:text="${editing?.id == null ? 'Thêm chi nhánh' : 'Sửa chi nhánh'}"></h2>
+<p th:if="${editing?.id != null}">Đang chỉnh sửa: <strong th:text="${editing.name}"></strong></p>
+<form th:action="@{/admin/branches}" method="post">
+<input type="hidden" name="id" th:value="${editing?.id}">
+<label class="form-label" for="branch-name">Tên chi nhánh</label><input class="form-control" id="branch-name" name="name" th:value="${editing?.name}" maxlength="100" required>
+<label class="form-label mt-3" for="address">Địa chỉ</label><input class="form-control" id="address" name="address" th:value="${editing?.address}" maxlength="255" required>
+<label class="form-label mt-3" for="phone">Điện thoại</label><input class="form-control" id="phone" name="phone" type="tel" th:value="${editing?.phone}" maxlength="20" pattern="[+]?[0-9][0-9 \(\)\-]{0,19}" required>
+<label class="form-check mt-3"><input class="form-check-input" type="checkbox" name="active" value="true" th:checked="${editing == null or editing.active}"> Đang hoạt động</label>
+<div class="management-actions mt-4"><button class="btn btn-primary" th:text="${editing?.id == null ? 'Thêm chi nhánh' : 'Lưu thay đổi'}"></button><a class="btn btn-light" href="/admin/branches" th:text="${editing?.id == null ? 'Tạo mới' : 'Hủy'}"></a></div>
+</form>
+</section>
+</div>
+</main></div>
+<div th:replace="~{fragments/layout :: scripts}"></div>
+<script src="/js/admin.js" defer></script>
+</body></html>
