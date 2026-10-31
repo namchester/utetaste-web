@@ -608,6 +608,8 @@ button:disabled {
 .luxury-nav .nav-links {
   display: flex;
   gap: 32px;
+  flex: 1;
+  justify-content: center;
 }
 
 .luxury-nav .nav-link {
@@ -622,32 +624,34 @@ button:disabled {
   color: var(--orange);
 }
 
-.btn-staff-portal {
-  background: var(--green);
-  color: #ffffff;
-  border: 1px solid var(--green);
-  border-radius: var(--radius-full);
-  padding: 9px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(17, 52, 40, 0.15);
+.luxury-nav .public-navigation {
+  display: flex; align-items: center; flex: 1; min-width: 0; gap: 24px;
 }
-
-.btn-staff-portal:hover {
-  background: var(--green-dark);
-  color: #ffffff;
-  transform: translateY(-1px);
+.luxury-nav .nav-actions {
+  display: flex; align-items: center; flex: none; gap: 10px;
+}
+.luxury-nav .btn-portal-entry {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-width: 136px; min-height: 44px; padding: 10px 16px;
+  border: 1px solid var(--green); border-radius: var(--radius-full);
+  background: var(--green); color: #ffffff;
+  font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.25;
+  white-space: nowrap; text-decoration: none;
+  box-shadow: 0 4px 12px rgba(17, 52, 40, 0.15);
+  transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.luxury-nav .btn-portal-entry:hover,
+.luxury-nav .btn-portal-entry:focus-visible {
+  background: var(--green-dark); border-color: var(--green-dark); color: #ffffff;
   box-shadow: 0 6px 16px rgba(17, 52, 40, 0.25);
 }
-
-.staff-arrow {
-  font-size: 12px;
-  transition: transform 0.2s ease;
+.luxury-nav .btn-portal-entry:hover { transform: translateY(-1px); }
+.luxury-nav .btn-portal-entry:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.luxury-nav .btn-portal-entry:active {
+  background: var(--green-dark); border-color: var(--green-dark); color: #ffffff;
+  transform: translateY(0); box-shadow: inset 0 2px 4px #0002;
 }
-
-.btn-staff-portal:hover .staff-arrow {
-  transform: translate(2px, -2px);
-}
+.luxury-nav .portal-icon { display: block; width: 20px; height: 20px; flex: none; }
 
 .landing {
   max-width: 1440px;

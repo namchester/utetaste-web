@@ -62,7 +62,7 @@
         setOpen(false); publicToggle.focus();
       }
     });
-    mobile.addEventListener('change', () => setOpen(false));
+    matchMedia('(max-width: 1100px)').addEventListener('change', () => setOpen(false));
   }
 
   document.addEventListener('keydown', event => {

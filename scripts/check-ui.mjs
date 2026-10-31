@@ -126,6 +126,47 @@ async function check(name, expression) {
   assert(await evaluate(expression), name);
   checks.push(name); console.log('PASS ' + name);
 }
+async function portalHeaderChecks() {
+  const properties=['height','padding-top','padding-right','padding-bottom','padding-left','font-family','font-size','font-weight','line-height','border-radius','column-gap','color','background-color','box-shadow'];
+  const styleEquality='(()=>{const links=[...document.querySelectorAll(".btn-portal-entry")],props='+JSON.stringify(properties)+';return links.length===2&&props.every(p=>getComputedStyle(links[0]).getPropertyValue(p)===getComputedStyle(links[1]).getPropertyValue(p))})()';
+  for(const width of [320,375,390,768,1024,1440]){
+    await viewport(width,900);
+    await evaluate('document.fonts.ready.then(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))');
+    await evaluate('(()=>{const b=document.querySelector("[data-public-nav]");if(b.getClientRects().length&&b.getAttribute("aria-expanded")!=="true")b.click()})()');
+    await check('Portal buttons share dimensions and typography at '+width,styleEquality);
+    await check('Portal order, icons, touch targets and no clipping at '+width,'(()=>{const links=[...document.querySelectorAll(".btn-portal-entry")],r=links.map(a=>a.getBoundingClientRect());return links.map(a=>a.textContent.trim()).join("|")==="Khách hàng|Nhân viên"&&r.every(x=>x.height>=44&&x.left>=0&&x.right<=innerWidth)&&Math.abs(r[0].top-r[1].top)<1&&r[1].left-r[0].right>=8&&links.every(a=>{const i=a.querySelector("svg"),b=i.getBoundingClientRect();return i.getAttribute("aria-hidden")==="true"&&i.getAttribute("focusable")==="false"&&b.width===20&&b.height===20&&a.scrollWidth<=a.clientWidth})&&document.documentElement.scrollWidth<=innerWidth})()');
+    const shot=await command('Page.captureScreenshot',{format:'png'});
+    fs.writeFileSync(path.join(output,'home-portals-'+width+'.png'),Buffer.from(shot.data,'base64'));
+  }
+  await check('Anonymous customer and staff keep the existing login route','document.querySelector("#customer-portal").getAttribute("href")==="/login"&&document.querySelector("#staff-portal").getAttribute("href")==="/login"');
+  await contrast('.btn-portal-entry');
+  await command('DOM.enable');await command('CSS.enable');
+  const {root}=await command('DOM.getDocument');
+  const nodes=[];
+  for(const selector of ['#customer-portal','#staff-portal'])nodes.push((await command('DOM.querySelector',{nodeId:root.nodeId,selector})).nodeId);
+  for(const state of ['hover','focus-visible','active']){
+    for(const nodeId of nodes)await command('CSS.forcePseudoState',{nodeId,forcedPseudoClasses:[state]});
+    await new Promise(r=>setTimeout(r,250));
+    await check('Portal '+state+' uses matching accessible colors and geometry',styleEquality);
+    for(const nodeId of nodes)await command('CSS.forcePseudoState',{nodeId,forcedPseudoClasses:[]});
+  }
+  await viewport(390,844);
+  await evaluate('new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))');
+  await evaluate('(()=>{const b=document.querySelector("[data-public-nav]");if(b.getAttribute("aria-expanded")!=="true")b.click();document.querySelector(".nav-links a:last-child").focus()})()');
+  async function tab(shift=false){await command('Input.dispatchKeyEvent',{type:'keyDown',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,modifiers:shift?8:0});await command('Input.dispatchKeyEvent',{type:'keyUp',key:'Tab',code:'Tab',windowsVirtualKeyCode:9,modifiers:shift?8:0});}
+  await tab();
+  await check('Tab reaches customer with visible focus ring','document.activeElement.id==="customer-portal"&&document.activeElement.matches(":focus-visible")&&getComputedStyle(document.activeElement).outlineWidth==="3px"');
+  await tab();
+  await check('Tab reaches staff with the same visible focus ring','document.activeElement.id==="staff-portal"&&document.activeElement.matches(":focus-visible")&&getComputedStyle(document.activeElement).outlineWidth==="3px"');
+  await tab(true);
+  await check('Shift Tab returns to customer','document.activeElement.id==="customer-portal"');
+  await command('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await command('Input.dispatchKeyEvent',{type:'keyUp',key:'Enter',code:'Enter',windowsVirtualKeyCode:13});
+  await waitFor(()=>evaluate('location.pathname==="/login"&&document.readyState==="complete"'),'customer portal keyboard navigation');
+  await check('Enter on customer opens the shared login form','!!document.querySelector("#username")');
+  await navigate('/');
+}
+
 async function layout(name, width, height) {
   if (auditMode && !name.includes('print')) await auditResponsive(name);
   await viewport(width, height);
@@ -133,7 +174,7 @@ async function layout(name, width, height) {
   await evaluate('new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))).then(()=>Promise.all(document.getAnimations().filter(animation=>animation.effect.getComputedTiming().iterations!==Infinity).map(animation=>animation.finished.catch(()=>{})))).then(()=>true)');
   await check(name + ' has no horizontal page overflow', 'document.documentElement.scrollWidth <= innerWidth + 1');
   if (width <= 420 && await evaluate('location.pathname === "/"')) {
-    assert(await evaluate('document.querySelector(".luxury-nav .brand-text").getBoundingClientRect().right + 4 <= document.querySelector(".nav-actions").getBoundingClientRect().left'), 'Mobile header branding and controls do not overlap');
+    assert(await evaluate('(()=>{const brand=document.querySelector(".luxury-nav .brand-text").getBoundingClientRect();return [...document.querySelectorAll(".public-nav-toggle,.btn-portal-entry")].filter(el=>el.getClientRects().length).every(el=>{const r=el.getBoundingClientRect();return Math.max(r.left-brand.right,brand.left-r.right,r.top-brand.bottom,brand.top-r.bottom)>=4})})()'), 'Mobile header branding and visible controls do not overlap');
   }
   const result = await command('Page.captureScreenshot', {format: 'png', captureBeyondViewport: false});
   fs.writeFileSync(path.join(output, name + '.png'), Buffer.from(result.data, 'base64'));
@@ -209,7 +250,7 @@ try {
     if(header) responseCookies.push({path:requestPaths.get(event.requestId),cookies:header.split('\n').map(cookie=>({name:cookie.split('=')[0],deleted:/max-age=0/i.test(cookie),httpOnly:/httponly/i.test(cookie)}))});
   });
 
-  await navigate('/'); await layout('home-desktop', 1440, 1000); await contrast('.btn-primary'); await layout('home-mobile', 390, 844);
+  await navigate('/'); await portalHeaderChecks(); await layout('home-desktop', 1440, 1000); await contrast('.btn-primary'); await layout('home-mobile', 390, 844);
   await evaluate('document.querySelector("[data-public-nav]").click()');
   await check('Public navigation opens on mobile', 'document.querySelector("[data-public-nav]").getAttribute("aria-expanded") === "true" && document.querySelector("#public-navigation").getClientRects().length > 0');
   await command('Input.dispatchKeyEvent', {type: 'keyDown', key: 'Escape', code: 'Escape'});
@@ -484,6 +525,13 @@ try {
   await check('Email verification returns to login without automatic authentication', 'location.pathname === "/login" && location.search.includes("verified")');
   await submit('document.querySelector("#username").value=' + JSON.stringify(customerEmail) + ';document.querySelector("#password").value="Customer@Test2026";document.querySelector("form").requestSubmit()');
   await check('Verified USER logs into account page', 'location.pathname === "/account"');
+  await navigate('/');
+  await viewport(390,844);
+  await evaluate('document.querySelector("[data-public-nav]").click()');
+  await check('Authenticated USER keeps customer label and targets account','document.querySelector("#customer-portal").textContent.trim()==="Khách hàng"&&document.querySelector("#customer-portal").getAttribute("href")==="/account"&&document.querySelector("#staff-portal").getAttribute("href")==="/login"');
+  await submit('document.querySelector("#customer-portal").click()');
+  await check('Customer portal enters the authenticated account','location.pathname==="/account"');
+
   await layout('account-user-mobile', 390, 844);
   await navigate('/account/profile');await layout('member-profile',390,844);
   await evaluate('document.querySelector("#fullName").value="Khách thành viên";document.querySelector("#phone").value="0901234567"');
